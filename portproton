@@ -4,127 +4,112 @@
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
 export portname="PortProton"
-export port_ver=1.0
-########################################################################
-deflink="${HOME}/PortWINE/${portname}"
-if [ "$(id -u)" == "0" ] ; then
-	echo "Do not run the script from the superuser!"
-	zenity --error --text "Do not run the script from the superuser!" 2> /dev/null
-	exit 1
-fi
-if [ "$(dirname "`readlink -f "$0"`")" == "/usr/bin" ] ; then
-	[ -z "${XDG_DATA_HOME}" ] && export XDG_DATA_HOME="$HOME/.local/share"
-	if [ -f "${XDG_DATA_HOME}/PortWINE/PortProton/data/scripts/start.sh" ] ; then
-		/usr/bin/env bash "${XDG_DATA_HOME}/PortWINE/PortProton/data/scripts/start.sh" "$@"
-		exit 0
-	else
-		if [ ! -z "$(locale | grep "LANG=ru_RU.UTF-8")" ] ; then
-			PW_SET_LANG="Russian"
-		else
-			PW_SET_LANG="English"
-		fi
-		export PW_SILENT_INSTALL="1"
-		export PW_AUTOPLAY=1
-		deflink="${XDG_DATA_HOME}/PortWINE/${portname}"
-	fi
-fi
-########################################################################
-export INSTALLING_PORT=1
-export PROGS_INST=""
-export vexit=0
-########################################################################
-for PROGS in "wget" "curl" "tar" "awk" "zenity" "cabextract" "pidof" ; do
-	if [ ! -x "`which "${PROGS}" 2>/dev/null`" ] ; then
-		PROGS_INST="${PROGS_INST} ${PROGS}" && vexit=1
-	fi
-done
-if [ "${vexit}" == "1" ] ; then
-    echo "You will need to install: ${PROGS_INST}, and restart the script"
-    exit 1
-fi
+export port_ver=1.1
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
-links="$(pwd)"
+script_path="$(pwd)"
+def_path="${HOME}/${portname}"
 ########################################################################
-if [ "$1" == "-rus" ] ; then
-	PW_SET_LANG="Russian"
-	export PW_SILENT_INSTALL="1"
-elif [ "$1" == "-eng" ] ; then
-	PW_SET_LANG="English"
-	export PW_SILENT_INSTALL="1"
-elif [ -z "${PW_SET_LANG}" ] ; then
-	PW_SET_LANG=`zenity --title  "Install $portname" --text "Select the installation language" --list --radiolist \
---column="Set:" --column "Language:" \
-	TRUE "Russian" \
-	FALSE "English" ` 2> /dev/null  
-	if [ $? -eq 1 ] ; then exit 1 ; fi
-	case $PW_SET_LANG in
-		"Russian")
-			INFO_TEXT="Вы запустили установщик PortWINE ${portname} версии ${port_ver}. \n\nЭто не коммерческий продукт и развивается исключительно за идею и Ваши пожертвования. \nВсе права сторонего програмного обеспечения принадлежат их владельцам! \nПродолжая установку вы автоматически соглашаетесь с данными условиями." > /dev/null 2>&1 ;;	
-		"English")
-			INFO_TEXT="You run the installer PortWINE ${portname} v. ${port_ver}. \n\nThis is not a commercial product and developed exclusively for the idea and donate. \nAll rights to third-party software belong to their respective owners! \nContinuing the installation of you agree to these terms." > /dev/null 2>&1 ;;
-	esac
-	`zenity --info --title "INFO" --text "$INFO_TEXT" --no-wrap ` 2> /dev/null 
-	if [ $? -eq 1 ] ; then echo "error" && exit 1 ; fi
+if [ "$(id -u)" == "0" ] ; then
+	echo "Do not run the script from the superuser!"
+	zenity --error --text "Do not run ${portname} from the superuser!" &>/dev/null
+	exit 1
+fi
+
+[ -z "${XDG_DATA_HOME}" ] && export XDG_DATA_HOME="$HOME/.local/share"
+PP_CONFIG_FILE="${HOME}/.config/${portname}.conf"
+if [ -f "${XDG_DATA_HOME}/PortWINE/PortProton/data/scripts/start.sh" ] ; then
+	echo "${XDG_DATA_HOME}/PortWINE/PortProton" > "${PP_CONFIG_FILE}"
+elif [ -f "${HOME}/PortWINE/PortProton/data/scripts/start.sh" ] ; then
+	echo "${XDG_DATA_HOME}/PortWINE/PortProton" > "${PP_CONFIG_FILE}"
+fi
+
+if [ "$script_path" == "/usr/bin" ] && [ -f "${PP_CONFIG_FILE}" ] ; then
+	export PORT_WINE_PATH="$(cat "${PP_CONFIG_FILE}" | head -n 1)"
+	if [ -f "${PORT_WINE_PATH}/data/scripts/start.sh" ] ; then
+		echo "${port_ver}" > "${PORT_WINE_PATH}/data/tmp/${portname}_ver"
+		/usr/bin/env bash "${PORT_WINE_PATH}/data/scripts/start.sh" "$@"
+		exit 0
+	else
+		rm -f "${PP_CONFIG_FILE}"
+	fi
+fi
+if locale | grep "LANG=ru_RU.UTF-8" &>/dev/null
+then PW_SET_LANG="Russian"
+else PW_SET_LANG="English"
 fi
 ########################################################################
-if [ "${PW_SILENT_INSTALL}" == "1" ] ; then
-	echo "${portname} is installed in ${deflink}"
-	D_PATH="${deflink}"
-else
+export PW_SILENT_INSTALL=1
+export PW_AUTOPLAY=1
+export INSTALLING_PORT=1
+########################################################################
+if [ -z "${PW_SET_LANG}" ] ; then
+	PW_SET_LANG=$(zenity --title  "Install $portname" --text "Select the installation language" --list --radiolist \
+--column="Set:" --column "Language:" \
+	TRUE "Russian" \
+	FALSE "English")
+	[ "$?" != "0" ] && exit 1
 	case $PW_SET_LANG in
 		"Russian")
-			inst1=`zenity --title  "Install ${portname}" --text "Выберите путь для установки (обновления) порта,\nили оставьте его по умолчанию." --list --radiolist --width=350 --height=220 \
-			--column="Выбор" --column "Путь:" \
-			TRUE "${deflink}" \
-			FALSE "Другой путь..." ` 2> /dev/null
-			if [ $? -eq 1 ] ; then exit 1 ; fi
-			case $inst1 in
-				"${deflink}")
-					D_PATH="${deflink}" ;;	
-				"Другой путь...")
-					D_PATH=`zenity --file-selection --directory --title="Выберите путь..." ` 
-					D_PATH="${D_PATH}/${portname}" ;;
-			esac ;;
+			INFO_TEXT="Вы запустили установщик PortWINE ${portname} версии ${port_ver}. \n\nЭто не коммерческий продукт и развивается исключительно за идею и Ваши пожертвования. \nВсе права сторонего програмного обеспечения принадлежат их владельцам! \nПродолжая установку вы автоматически соглашаетесь с данными условиями." ;;
 		"English")
-			inst1=`zenity --title  "Install ${portname}" --text "Select the installation path (update) port,\nor leave it in default." --list --radiolist --width=350 --height=220 \
-			--column="Set..." --column "Path:" \
-			TRUE "${deflink}" \
-			FALSE "Other path..." ` 2> /dev/null
-			if [ $? -eq 1 ];then exit 1; fi
-			case $inst1 in
-				"${deflink}")
-					D_PATH="${deflink}" ;;	
-				"Other path...")
-					D_PATH=`zenity --file-selection --directory --title="Select the path..." ` 
-					D_PATH="${D_PATH}/${portname}" ;;
-			esac ;;
+			INFO_TEXT="You run the installer PortWINE ${portname} v. ${port_ver}. \n\nThis is not a commercial product and developed exclusively for the idea and donate. \nAll rights to third-party software belong to their respective owners! \nContinuing the installation of you agree to these terms." ;;
 	esac
-	if [ $? -eq 1 ] ; then echo "error" && exit 1 ; fi
+	zenity --info --title "INFO" --text "$INFO_TEXT" --no-wrap &>/dev/null
+	[ "$?" != "0" ] && exit 1
 fi
 ########################################################################
 case $PW_SET_LANG in
 	"Russian")
+		inst1=$(zenity --title  "Install ${portname}" --text "Выберите путь для установки (обновления) порта,\nили оставьте его по умолчанию." --list --radiolist --width=350 --height=250 \
+		--column="Выбор" --column "Путь:" \
+		TRUE "${def_path}" \
+		FALSE "Другой путь...")
+		[ "$?" != "0" ] && exit 1
+		case $inst1 in
+			"${def_path}")
+				D_PATH="${def_path}" ;;
+			"Другой путь...")
+				D_PATH="$(zenity --file-selection --directory --title="Выберите путь..." &>/dev/null)" ;;
+		esac ;;
+	"English")
+		inst1=$(zenity --title  "Install ${portname}" --text "Select the installation path (update) port,\nor leave it in default." --list --radiolist --width=350 --height=250 \
+		--column="Set..." --column "Path:" \
+		TRUE "${def_path}" \
+		FALSE "Other path...")
+		[ "$?" != "0" ] && exit 1
+		case $inst1 in
+			"${def_path}")
+				D_PATH="${def_path}" ;;
+			"Other path...")
+				D_PATH="$(zenity --file-selection --directory --title="Select the path..." &>/dev/null)" ;;
+		esac ;;
+esac
+echo "${D_PATH}" | grep -i "${portname}" &>/dev/null || D_PATH="${D_PATH}/${portname}"
+########################################################################
+case $PW_SET_LANG in
+	"Russian")
 		progress_bar() {
-		zenity --progress --title="Установка..." --text="Настройка ${portname}" --pulsate --auto-close --auto-kill --width=450 > /dev/null 2>&1 
+		zenity --progress --title="Установка..." --text="Настройка ${portname}" --pulsate --auto-close --auto-kill --width=450 &>/dev/null
 		} ;;
 	"English")
 		progress_bar() {
-		zenity --progress --title="Install..." --text="Install ${portname}" --pulsate --auto-close --auto-kill --width=450 > /dev/null 2>&1 
+		zenity --progress --title="Install..." --text="Install ${portname}" --pulsate --auto-close --auto-kill --width=450 &>/dev/null
 		} ;;
 esac
 ########################################################################
 export PORT_WINE_PATH="${D_PATH}"
+echo "${PORT_WINE_PATH}" > "${PP_CONFIG_FILE}"
 if [ ! -d "${PORT_WINE_PATH}" ] ; then
-    mkdir -p "$PORT_WINE_PATH"
+    mkdir -p "$PORT_WINE_PATH" || exit 1
 else
 	rm -fr "${PORT_WINE_PATH}/data/tmp"
-	rm -f "${PORT_WINE_PATH}/data/scripts/"* > /dev/null 2>&1
+	rm -f "${PORT_WINE_PATH}/data/scripts/"* &>/dev/null
 fi
 ########################################################################
 mkdir -p "${PORT_WINE_PATH}/data/tmp"
 echo "${port_ver}" > "${PORT_WINE_PATH}/data/tmp/${portname}_ver"
-case $PW_SET_LANG in
+case "${PW_SET_LANG}" in
 	"Russian") echo "RUS" > "${PORT_WINE_PATH}/data/tmp/${portname}_loc" ;;
 	"English") echo "ENG" > "${PORT_WINE_PATH}/data/tmp/${portname}_loc" ;;
 esac
@@ -159,12 +144,8 @@ try_download_scripts () {
 		[ "$?" != "0" ] && echo "Fatal error! Exiting." && exit 1
 	fi
 }
-if [ "${PW_SILENT_INSTALL}" == "1" ] && [ ! -f "/usr/bin/portproton" ] ; then
-	try_download_scripts
-else
-	try_download_scripts | progress_bar
-fi
 ########################################################################
+try_download_scripts | progress_bar
 cd "${PORT_WINE_PATH}/data/scripts"
 /usr/bin/env bash "${PORT_WINE_PATH}/data/scripts/setup.sh" && exit 0
 ################################ARCH_BIN################################
