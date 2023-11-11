@@ -4,7 +4,7 @@
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
 export portname="PortProton"
-export port_ver=1.1
+export port_ver=1.2
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
 script_path="$(pwd)"
@@ -61,7 +61,7 @@ fi
 ########################################################################
 case $PW_SET_LANG in
 	"Russian")
-		inst1=$(zenity --title  "Install ${portname}" --text "Выберите путь для установки (обновления) порта,\nили оставьте его по умолчанию." --list --radiolist --width=350 --height=250 \
+		inst1=$(zenity --title  "Install ${portname}" --text "Выберите путь для установки (обновления) ${portname},\nили оставьте его по умолчанию.\n\nВнимание:\nУстанавливать необходимо на файловую систему Linux (ext4, btrfs и прочие)." --list --radiolist --width=350 --height=250 \
 		--column="Выбор" --column "Путь:" \
 		TRUE "${def_path}" \
 		FALSE "Другой путь...")
