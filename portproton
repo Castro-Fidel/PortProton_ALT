@@ -4,7 +4,7 @@
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
 export portname="PortProton"
-export port_ver=1.2
+export port_ver=1.3
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
 script_path="$(pwd)"
