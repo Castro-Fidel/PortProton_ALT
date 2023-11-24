@@ -12,7 +12,7 @@ def_path="${HOME}/${portname}"
 ########################################################################
 if [ "$(id -u)" == "0" ] ; then
 	echo "Do not run the script from the superuser!"
-	zenity --error --text "Do not run ${portname} from the superuser!" &>/dev/null
+	zenity --error --text "Do not run ${portname} from the superuser!" 2>/dev/null
 	exit 1
 fi
 
@@ -34,7 +34,7 @@ if [ "$script_path" == "/usr/bin" ] && [ -f "${PP_CONFIG_FILE}" ] ; then
 		rm -f "${PP_CONFIG_FILE}"
 	fi
 fi
-if locale | grep "LANG=ru_RU.UTF-8" &>/dev/null
+if locale | grep "LANG=ru_RU.UTF-8" 2>/dev/null
 then PW_SET_LANG="Russian"
 else PW_SET_LANG="English"
 fi
@@ -55,7 +55,7 @@ if [ -z "${PW_SET_LANG}" ] ; then
 		"English")
 			INFO_TEXT="You run the installer PortWINE ${portname} v. ${port_ver}. \n\nThis is not a commercial product and developed exclusively for the idea and donate. \nAll rights to third-party software belong to their respective owners! \nContinuing the installation of you agree to these terms." ;;
 	esac
-	zenity --info --title "INFO" --text "$INFO_TEXT" --no-wrap &>/dev/null
+	zenity --info --title "INFO" --text "$INFO_TEXT" --no-wrap 2>/dev/null
 	[ "$?" != "0" ] && exit 1
 fi
 ########################################################################
@@ -70,7 +70,7 @@ case $PW_SET_LANG in
 			"${def_path}")
 				D_PATH="${def_path}" ;;
 			"Другой путь...")
-				D_PATH="$(zenity --file-selection --directory --title="Выберите путь..." &>/dev/null)" ;;
+				D_PATH="$(zenity --file-selection --directory --title="Выберите путь..." 2>/dev/null)" ;;
 		esac ;;
 	"English")
 		inst1=$(zenity --title  "Install ${portname}" --text "Select the installation path (update) port,\nor leave it in default." --list --radiolist --width=350 --height=250 \
@@ -82,19 +82,19 @@ case $PW_SET_LANG in
 			"${def_path}")
 				D_PATH="${def_path}" ;;
 			"Other path...")
-				D_PATH="$(zenity --file-selection --directory --title="Select the path..." &>/dev/null)" ;;
+				D_PATH="$(zenity --file-selection --directory --title="Select the path..." 2>/dev/null)" ;;
 		esac ;;
 esac
-echo "${D_PATH}" | grep -i "${portname}" &>/dev/null || D_PATH="${D_PATH}/${portname}"
+echo "${D_PATH}" | grep -i "${portname}" 2>/dev/null || D_PATH="${D_PATH}/${portname}"
 ########################################################################
 case $PW_SET_LANG in
 	"Russian")
 		progress_bar() {
-		zenity --progress --title="Установка..." --text="Настройка ${portname}" --pulsate --auto-close --auto-kill --width=450 &>/dev/null
+		zenity --progress --title="Установка..." --text="Настройка ${portname}" --pulsate --auto-close --auto-kill --width=450 2>/dev/null
 		} ;;
 	"English")
 		progress_bar() {
-		zenity --progress --title="Install..." --text="Install ${portname}" --pulsate --auto-close --auto-kill --width=450 &>/dev/null
+		zenity --progress --title="Install..." --text="Install ${portname}" --pulsate --auto-close --auto-kill --width=450 2>/dev/null
 		} ;;
 esac
 ########################################################################
@@ -104,7 +104,7 @@ if [ ! -d "${PORT_WINE_PATH}" ] ; then
     mkdir -p "$PORT_WINE_PATH" || exit 1
 else
 	rm -fr "${PORT_WINE_PATH}/data/tmp"
-	rm -f "${PORT_WINE_PATH}/data/scripts/"* &>/dev/null
+	rm -f "${PORT_WINE_PATH}/data/scripts/"* 2>/dev/null
 fi
 ########################################################################
 mkdir -p "${PORT_WINE_PATH}/data/tmp"
