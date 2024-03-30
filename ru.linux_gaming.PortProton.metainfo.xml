@@ -3,14 +3,14 @@
 	<id>ru.linux_gaming.PortProton</id>
 
 	<name>PortProton</name>
-	<summary>Software for playing Microsoft Windows games and launchers</summary>
-	<summary xml:lang="ru">Программа для запуска игр и лаунчеров с Microsoft Windows</summary>
+	<summary>Software for running Windows games</summary>
+	<summary xml:lang="ru">Программа для запуска игр с Windows</summary>
 
 	<developer id="linux-gaming.ru">
 		<name>Mikhail Tergoev</name>
 	</developer>
 
-	<url type="homepage">linux-gaming.ru</url>
+	<url type="homepage">https://linux-gaming.ru</url>
 	<url type="bugtracker">https://github.com/Castro-Fidel/PortWINE/issues</url>
 	<url type="donation">https://linux-gaming.ru/t/podderzhat-proekt/123/</url>
 	<url type="vcs-browser">https://github.com/Castro-Fidel/PortWINE</url>
