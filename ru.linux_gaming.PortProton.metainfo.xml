@@ -3,8 +3,8 @@
 	<id>ru.linux_gaming.PortProton</id>
 
 	<name>PortProton</name>
-	<summary>Software for running Windows games</summary>
-	<summary xml:lang="ru">Программа для запуска игр с Windows</summary>
+	<summary>Software for running Windows games.</summary>
+	<summary xml:lang="ru">Программа для запуска Windows игр.</summary>
 
 	<developer id="linux-gaming.ru">
 		<name>Mikhail Tergoev</name>
@@ -24,10 +24,10 @@
 
 	<description>
 		<p>
-			PortProton is a project designed to make it easy and convenient to run Windows games on Linux for both beginners and advanced users. The project strives to make running games (and other software) as easy as possible, but at the same time provides flexible settings for advanced users
+			PortProton is a project designed to make it easy and convenient to run Windows games on Linux for both beginners and advanced users. The project strives to make running games (and other software) as easy as possible, but at the same time provides flexible settings for advanced users.
 		</p>
 		<p xml:lang="ru">
-			PortProton – это проект, разработанный для того, чтобы сделать легким и удобным запуск Windows игр на Linux как для начинающих, так и для продвинутых пользователей. Проект стремится сделать запуск игр (и другого программного обеспечения) максимально простым, но в то же время предоставляет гибкие настройки для продвинутых пользователей
+			PortProton – это проект, разработанный для того, чтобы сделать легким и удобным запуск Windows игр на Linux как для начинающих, так и для продвинутых пользователей. Проект стремится сделать запуск игр (и другого программного обеспечения) максимально простым, но в то же время предоставляет гибкие настройки для продвинутых пользователей.
 		</p>
 	</description>
 
