@@ -4,7 +4,7 @@
 # License MIT
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
-export port_ver=1.6
+export port_ver=1.6.1
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
 script_path="$(pwd)"
@@ -23,7 +23,7 @@ if grep -i "SteamOS" /etc/os-release &>/dev/null
 then fatal "You will need to install flatpak version of PortProton: appstream://ru.linux_gaming.PortProton\n\nhttps://flathub.org/apps/ru.linux_gaming.PortProton\n"
 elif ! command -v yad &>/dev/null
 then fatal "You will need to install \"yad\" to your system!"
-else yad_gui="$(command -v yad) --window-icon=ru.linux_gaming.PortProton.svg --borders=10 --center --text-align=center"
+else yad_gui="yad --window-icon=ru.linux_gaming.PortProton --borders=10 --center --text-align=center"
 fi
 ########################################################################
 check_flatpak () {
@@ -162,8 +162,8 @@ else cd "${PORT_WINE_DATA_PATH}"
 fi
 
 $yad_gui --progress --pulsate --title="$loc_install" --text="$loc_install" \
---skip-taskbar --no-buttons --width=500 &>/dev/null &
-YAD_PID_PROGRESS_BAR_BLOCK="$!"
+		 --close-on-unfocus --no-buttons --skip-taskbar --width=500 &>/dev/null &
+sleep 1
 
 echo -e "\nTry download scripts from gitlab.eterfund.ru..."
 if ! curl -f -# -A "Mozilla/5.0 (compatible; Konqueror/2.1.1; X11)" -H 'Cache-Control: no-cache, no-store' -H 'Pragma: no-cache' \
@@ -191,6 +191,5 @@ else
 	[ "$?" != "0" ] && fatal "Critical error during file unpacking!"
 fi
 ########################################################################
-kill -s SIGUSR1 "$YAD_PID_PROGRESS_BAR_BLOCK" &>/dev/null
 cd "${PORT_WINE_DATA_PATH}/scripts"
 /usr/bin/env bash "${PORT_WINE_DATA_PATH}/scripts/setup.sh" && exit 0
