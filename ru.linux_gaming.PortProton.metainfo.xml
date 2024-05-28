@@ -108,6 +108,13 @@
 	<content_rating type="oars-1.1"/>
 
 	<releases>
+		<release version="1.6.2" date="2024-05-28">
+			<description>
+				<ul>
+					<li>the archive with scripts can now be downloaded in advance and placed in the "Path to PortProton/data/tmp"</li>
+				</ul>
+			</description>
+		</release>
 		<release version="1.6.1" date="2024-05-17">
 			<description>
 				<ul>
