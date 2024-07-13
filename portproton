@@ -86,6 +86,8 @@ if ! check_flatpak ; then
 		echo "${XDG_DATA_HOME}/PortWINE/PortProton" > "${PP_CONFIG_FILE}"
 	elif [[ -f "${HOME}/PortWINE/PortProton/data/scripts/start.sh" ]] ; then
 		echo "${HOME}/PortWINE/PortProton" > "${PP_CONFIG_FILE}"
+	elif [[ -f "${HOME}/PortProton/data/scripts/start.sh" ]] ; then
+		echo "${HOME}/PortProton" > "${PP_CONFIG_FILE}"
 	fi
 
 	if [[ "$script_path" == "/usr/bin" ]] \
@@ -93,9 +95,13 @@ if ! check_flatpak ; then
 	then
 		export PORT_WINE_PATH="$(cat "${PP_CONFIG_FILE}" | head -n 1)"
 		if [[ -f "${PORT_WINE_PATH}/data/scripts/start.sh" ]] ; then
-			echo "${port_ver}" > "${PORT_WINE_PATH}/data/tmp/PortProton_ver"
-			/usr/bin/env bash "${PORT_WINE_PATH}/data/scripts/start.sh" "$@"
-			exit 0
+			if [[ "$1" == "--repair" ]] ; then
+				export PORT_WINE_DATA_PATH="${PORT_WINE_PATH}/data"
+			else
+				echo "${port_ver}" > "${PORT_WINE_PATH}/data/tmp/PortProton_ver"
+				/usr/bin/env bash "${PORT_WINE_PATH}/data/scripts/start.sh" "$@"
+				exit 0
+			fi
 		else
 			rm -f "${PP_CONFIG_FILE}"
 		fi
@@ -104,44 +110,51 @@ else
 	if [ "$script_path" == "/app/bin" ] ; then
 		export PORT_WINE_PATH="${XDG_DATA_HOME}"
 		if [ -f "${PORT_WINE_PATH}/scripts/start.sh" ] ; then
-			echo "${port_ver}" > "${PORT_WINE_PATH}/tmp/PortProton_ver"
-			/usr/bin/env bash "${PORT_WINE_PATH}/scripts/start.sh" "$@"
-			exit 0
+			if [[ "$1" == "--repair" ]] ; then
+				export PORT_WINE_DATA_PATH="${XDG_DATA_HOME}"
+			else
+				echo "${port_ver}" > "${PORT_WINE_PATH}/tmp/PortProton_ver"
+				/usr/bin/env bash "${PORT_WINE_PATH}/scripts/start.sh" "$@"
+				exit 0
+			fi
 		fi
 	fi
 fi
 ########################################################################
-export PW_SILENT_INSTALL=1
 export PW_AUTOPLAY=1
 export INSTALLING_PORT=1
 ########################################################################
-if ! check_flatpak ; then
-	inst1=$($yad_gui --title  "$loc_install" --text "$loc_choose_path" --list --radiolist \
-	--width=600 --height=200  --column="$loc_set" --column "$loc_path" \
-	TRUE "${def_path}" \
-	FALSE "$loc_other_path")
-	[ "$?" != "0" ] && exit 1
-	inst1="$(echo $inst1 | awk -F'|' '{print $2}')"
-	case $inst1 in
-		"${def_path}")
-			D_PATH="${def_path}" ;;
-		"$loc_other_path")
-			D_PATH="$($yad_gui --file --directory --title="$loc_set_path" --width=800 --height=800)" ;;
-	esac
+if [[ "$1" != "--repair" ]] ; then
+	if ! check_flatpak ; then
+		inst1=$($yad_gui --title  "$loc_install" --text "$loc_choose_path" --list --radiolist \
+		--width=600 --height=200  --column="$loc_set" --column "$loc_path" \
+		TRUE "${def_path}" \
+		FALSE "$loc_other_path")
+		[ "$?" != "0" ] && exit 1
+		inst1="$(echo $inst1 | awk -F'|' '{print $2}')"
+		case $inst1 in
+			"${def_path}")
+				D_PATH="${def_path}" ;;
+			"$loc_other_path")
+				D_PATH="$($yad_gui --file --directory --title="$loc_set_path" --width=800 --height=800)" ;;
+		esac
 
-	[[ -z "${D_PATH}" ]] && fatal
-	echo "${D_PATH}" | grep -i "PortProton" 2>/dev/null || D_PATH="${D_PATH}/PortProton"
-	export PORT_WINE_DATA_PATH="${D_PATH}/data"
-	export PORT_WINE_PATH="${D_PATH}"
-	if [[ ! -z "$PORT_WINE_PATH" ]]
-	then echo "${PORT_WINE_PATH}" > "${PP_CONFIG_FILE}"
+		[[ -z "${D_PATH}" ]] && fatal
+		echo "${D_PATH}" | grep -i "PortProton" 2>/dev/null || D_PATH="${D_PATH}/PortProton"
+		export PORT_WINE_DATA_PATH="${D_PATH}/data"
+		export PORT_WINE_PATH="${D_PATH}"
+		if [[ ! -z "$PORT_WINE_PATH" ]]
+		then echo "${PORT_WINE_PATH}" > "${PP_CONFIG_FILE}"
+		fi
+	else
+		export PORT_WINE_DATA_PATH="${XDG_DATA_HOME}"
 	fi
-else
-	export PORT_WINE_DATA_PATH="${XDG_DATA_HOME}"
 fi
 
 if [[ ! -d "${PORT_WINE_DATA_PATH}" ]] ; then
     mkdir -p "$PORT_WINE_DATA_PATH" || fatal "Cannot create a directory: $PORT_WINE_PATH"
+elif [[ "$1" == "--repair" ]] ; then
+	rm -f "${PORT_WINE_DATA_PATH}/scripts/"* 2>/dev/null
 else
 	rm -fr "${PORT_WINE_DATA_PATH}/tmp"
 	rm -f "${PORT_WINE_DATA_PATH}/scripts/"* 2>/dev/null
