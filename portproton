@@ -4,7 +4,7 @@
 # License MIT
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
-export port_ver=1.6.1
+export port_ver=1.7.0
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
 script_path="$(pwd)"
@@ -149,6 +149,8 @@ if [[ "$1" != "--repair" ]] ; then
 	else
 		export PORT_WINE_DATA_PATH="${XDG_DATA_HOME}"
 	fi
+elif [[ -f "$PORT_WINE_PATH/data/user.conf" ]] ; then
+	sed -i 's/="devel"/="master"/g' "$PORT_WINE_PATH/data/user.conf"
 fi
 
 if [[ ! -d "${PORT_WINE_DATA_PATH}" ]] ; then
