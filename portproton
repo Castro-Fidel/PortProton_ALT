@@ -4,7 +4,7 @@
 # License MIT
 ########################################################################
 unset PW_AUTOPLAY PW_SET_LANG PW_SILENT_INSTALL
-export port_ver=1.7.1
+export port_ver=1.7.2
 ########################################################################
 cd "$(dirname "$(readlink -f "$0")")"
 script_path="$(pwd)"
@@ -15,7 +15,7 @@ fatal () {
 	exit 1
 }
 ########################################################################
-if [[ "$(id -u)" == "0" ]] ; then
+if [[ "$(id -u)" == "0" ]] && [[ ! -e "/userdata/system/batocera.conf" ]] ; then
 	fatal "Do not run the script from the superuser!"
 fi
 ########################################################################
