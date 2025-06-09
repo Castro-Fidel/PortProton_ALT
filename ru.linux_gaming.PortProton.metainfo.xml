@@ -3,20 +3,22 @@
 	<id>ru.linux_gaming.PortProton</id>
 
 	<name>PortProton</name>
-	<summary>Software for running Windows games.</summary>
-	<summary xml:lang="ru">Программа для запуска Windows игр.</summary>
+	<summary>Run Windows games on Linux easily</summary>
+	<summary xml:lang="ru">Легко запускайте Windows игры на Linux</summary>
 
-	<developer id="linux-gaming.ru">
+	<developer id="ru.linux_gaming">
 		<name>Mikhail Tergoev</name>
+		<name xml:lang="ru">Михаил Тергоев</name>
 	</developer>
 
 	<developer_name>Mikhail Tergoev</developer_name>
+	<developer_name xml:lang="ru">Михаил Тергоев</developer_name>
 
 	<url type="homepage">https://linux-gaming.ru</url>
 	<url type="bugtracker">https://github.com/Castro-Fidel/PortWINE/issues</url>
 	<url type="donation">https://linux-gaming.ru/t/podderzhat-proekt/123/</url>
 	<url type="vcs-browser">https://github.com/Castro-Fidel/PortWINE</url>
-	<url type="help">https://discord.gg/FTaheP99wE</url>
+	<url type="help">https://t.me/linux_gaming_ru</url>
 	<url type="faq">https://linux-gaming.ru/c/portproton/4</url>
 
 	<metadata_license>CC0-1.0</metadata_license>
@@ -24,10 +26,10 @@
 
 	<description>
 		<p>
-			PortProton is a project designed to make it easy and convenient to run Windows games on Linux for both beginners and advanced users. The project strives to make running games (and other software) as easy as possible, but at the same time provides flexible settings for advanced users.
+			PortProton simplifies launching Windows games on Linux, offering a user-friendly experience for beginners and extensive customization for advanced users. It streamlines game setup with automatic configurations while allowing fine-tuned adjustments for performance and compatibility.
 		</p>
 		<p xml:lang="ru">
-			PortProton – это проект, разработанный для того, чтобы сделать легким и удобным запуск Windows игр на Linux как для начинающих, так и для продвинутых пользователей. Проект стремится сделать запуск игр (и другого программного обеспечения) максимально простым, но в то же время предоставляет гибкие настройки для продвинутых пользователей.
+			PortProton упрощает запуск Windows игр на Linux, предлагая удобный интерфейс для новичков и широкие возможности настройки для опытных пользователей. Он автоматизирует настройку игр, обеспечивая простоту, но также позволяет точно настраивать параметры производительности и совместимости.
 		</p>
 	</description>
 
@@ -79,6 +81,7 @@
 
   <categories>
     <category>Game</category>
+	<category>Utility</category>
   </categories>
 
 	<keywords>
@@ -94,6 +97,7 @@
 		<mediatype>application/x-msi</mediatype>
 		<mediatype>application/x-ms-shortcut</mediatype>
 		<mediatype>application/x-wine-extension-msp</mediatype>
+		<mediatype>text/win-bat</mediatype>
 	</provides>
 
 	<recommends>
