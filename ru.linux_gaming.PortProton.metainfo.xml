@@ -115,7 +115,9 @@
 		<release version="1.7.2" date="2024-06-10">
 			<description>
 				<ul>
-					<li>Fix launch on Batocera</li>
+					<li>fixed launch on Batocera</li>
+					<li>fixed args: --repair</li>
+					<li>used first try dowload from git.linux-gaming.ru</li>
 				</ul>
 			</description>
 		</release>
